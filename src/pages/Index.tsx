@@ -23,11 +23,27 @@ const Index = () => {
   const fetchTools = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch("/api/tools");
-      if (!response.ok) {
-        throw new Error("Failed to fetch tools");
+      // Try API route first (for production), fall back to direct Supabase (for dev)
+      let data;
+      try {
+        const response = await fetch("/api/tools");
+        if (response.ok) {
+          data = await response.json();
+        } else {
+          throw new Error("API returned error");
+        }
+      } catch (apiError) {
+        // Fall back to direct Supabase query
+        console.log("API route failed, using direct Supabase query");
+        const { data: supabaseData, error } = await supabase
+          .from("mcp_tools")
+          .select("*")
+          .in("status", ["approved", "pending"]);
+        
+        if (error) throw error;
+        data = supabaseData;
       }
-      const data = await response.json();
+      
       setTools(data || []);
     } catch (error) {
       console.error("Error fetching tools:", error);
