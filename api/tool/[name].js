@@ -12,14 +12,8 @@ console.log('API Initialization:', {
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 export default async (req, res) => {
-  // Enable CORS
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
-  res.setHeader(
-    'Access-Control-Allow-Headers',
-    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
-  );
+  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS');
   res.setHeader('Content-Type', 'application/json');
 
   if (req.method === 'OPTIONS') {
@@ -34,8 +28,6 @@ export default async (req, res) => {
   }
 
   try {
-    console.log('Fetching tool:', name);
-    
     const { data, error } = await supabase
       .from('mcp_tools')
       .select('*')
@@ -44,13 +36,12 @@ export default async (req, res) => {
 
     if (error) {
       console.error('Supabase error:', error);
-      return res.status(404).json({ error: 'Tool not found', details: error });
+      return res.status(404).json({ error: 'Tool not found' });
     }
 
-    console.log('Tool fetched successfully:', data?.repo_name);
     res.status(200).json(data);
   } catch (err) {
     console.error('API error:', err);
-    res.status(500).json({ error: 'Failed to fetch tool', details: err.message });
+    res.status(500).json({ error: err.message });
   }
 };

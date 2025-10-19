@@ -508,31 +508,23 @@ const McpDetail = () => {
   const fetchToolDetails = useCallback(async () => {
     setIsLoading(true);
     
-    // Fetch from API or direct Supabase
     let toolData: McpTool | null = null;
+    
     try {
-      // Try API route first (for production), fall back to direct Supabase (for dev)
-      try {
-        const response = await fetch(`/api/tool/${name}`);
-        if (response.ok) {
-          toolData = await response.json();
-        } else {
-          throw new Error("API returned error");
-        }
-      } catch (apiError) {
-        // Fall back to direct Supabase query
-        console.log("API route failed, using direct Supabase query");
-        const { data, error } = await supabase
-          .from("mcp_tools")
-          .select("*")
-          .eq("repo_name", name)
-          .single();
-        
-        if (error) throw error;
-        toolData = data;
-      }
+      const { data, error } = await supabase
+        .from("mcp_tools")
+        .select("*")
+        .eq("repo_name", name)
+        .single();
       
-      setTool(toolData);
+      if (error) {
+        console.error("Error fetching tool:", error);
+        setIsLoading(false);
+        return;
+      }
+
+      toolData = data;
+      setTool(data);
     } catch (error) {
       console.error("Error fetching tool:", error);
       setIsLoading(false);
