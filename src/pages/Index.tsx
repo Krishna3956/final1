@@ -23,13 +23,17 @@ const Index = () => {
   const fetchTools = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch("/api/tools");
-      if (!response.ok) {
-        throw new Error(`API returned ${response.status}`);
+      const { data, error } = await supabase
+        .from("mcp_tools")
+        .select("*")
+        .in("status", ["approved", "pending"]);
+      
+      if (error) {
+        console.error("Error fetching tools:", error);
+      } else {
+        console.log("Tools fetched successfully:", data?.length || 0);
+        setTools(data || []);
       }
-      const data = await response.json();
-      console.log("Tools fetched successfully:", data?.length || 0);
-      setTools(data || []);
     } catch (error) {
       console.error("Error fetching tools:", error);
     }
