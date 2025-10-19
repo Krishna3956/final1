@@ -1,4 +1,3 @@
-import { VercelRequest, VercelResponse } from '@vercel/node';
 import { createClient } from '@supabase/supabase-js';
 
 const supabase = createClient(
@@ -6,7 +5,7 @@ const supabase = createClient(
   process.env.VITE_SUPABASE_PUBLISHABLE_KEY || ''
 );
 
-export default async (req: VercelRequest, res: VercelResponse) => {
+export default async (req, res) => {
   // Enable CORS
   res.setHeader('Access-Control-Allow-Credentials', 'true');
   res.setHeader('Access-Control-Allow-Origin', '*');
