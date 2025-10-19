@@ -14,6 +14,7 @@ export default async (req, res) => {
     'Access-Control-Allow-Headers',
     'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
   );
+  res.setHeader('Content-Type', 'application/json');
 
   if (req.method === 'OPTIONS') {
     res.status(200).end();
@@ -21,6 +22,9 @@ export default async (req, res) => {
   }
 
   try {
+    console.log('Fetching tools from Supabase...');
+    console.log('URL:', process.env.VITE_SUPABASE_URL);
+    
     const { data, error } = await supabase
       .from('mcp_tools')
       .select('*')
@@ -28,12 +32,13 @@ export default async (req, res) => {
 
     if (error) {
       console.error('Supabase error:', error);
-      return res.status(500).json({ error: error.message });
+      return res.status(500).json({ error: error.message, details: error });
     }
 
-    res.status(200).json(data);
+    console.log('Tools fetched successfully:', data?.length || 0);
+    res.status(200).json(data || []);
   } catch (err) {
     console.error('API error:', err);
-    res.status(500).json({ error: 'Failed to fetch tools' });
+    res.status(500).json({ error: 'Failed to fetch tools', details: err.message });
   }
 };

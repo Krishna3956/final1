@@ -14,6 +14,7 @@ export default async (req, res) => {
     'Access-Control-Allow-Headers',
     'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
   );
+  res.setHeader('Content-Type', 'application/json');
 
   if (req.method === 'OPTIONS') {
     res.status(200).end();
@@ -27,6 +28,8 @@ export default async (req, res) => {
   }
 
   try {
+    console.log('Fetching tool:', name);
+    
     const { data, error } = await supabase
       .from('mcp_tools')
       .select('*')
@@ -35,12 +38,13 @@ export default async (req, res) => {
 
     if (error) {
       console.error('Supabase error:', error);
-      return res.status(404).json({ error: 'Tool not found' });
+      return res.status(404).json({ error: 'Tool not found', details: error });
     }
 
+    console.log('Tool fetched successfully:', data?.repo_name);
     res.status(200).json(data);
   } catch (err) {
     console.error('API error:', err);
-    res.status(500).json({ error: 'Failed to fetch tool' });
+    res.status(500).json({ error: 'Failed to fetch tool', details: err.message });
   }
 };
