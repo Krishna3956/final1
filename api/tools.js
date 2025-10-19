@@ -22,8 +22,18 @@ export default async (req, res) => {
   }
 
   try {
-    console.log('Fetching tools from Supabase...');
-    console.log('URL:', process.env.VITE_SUPABASE_URL);
+    console.log('API /tools called');
+    console.log('Env vars present:', {
+      url: !!process.env.VITE_SUPABASE_URL,
+      key: !!process.env.VITE_SUPABASE_PUBLISHABLE_KEY
+    });
+    
+    if (!process.env.VITE_SUPABASE_URL || !process.env.VITE_SUPABASE_PUBLISHABLE_KEY) {
+      return res.status(500).json({ 
+        error: 'Missing Supabase credentials',
+        details: 'Environment variables not set'
+      });
+    }
     
     const { data, error } = await supabase
       .from('mcp_tools')
