@@ -1,9 +1,15 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(
-  process.env.VITE_SUPABASE_URL || '',
-  process.env.VITE_SUPABASE_PUBLISHABLE_KEY || ''
-);
+// Get env vars - try both VITE_ prefixed and non-prefixed versions
+const SUPABASE_URL = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL || '';
+const SUPABASE_KEY = process.env.VITE_SUPABASE_PUBLISHABLE_KEY || process.env.SUPABASE_PUBLISHABLE_KEY || '';
+
+console.log('API Initialization:', {
+  url: SUPABASE_URL ? 'SET' : 'MISSING',
+  key: SUPABASE_KEY ? 'SET' : 'MISSING'
+});
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 export default async (req, res) => {
   // Enable CORS
