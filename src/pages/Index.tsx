@@ -23,10 +23,13 @@ const Index = () => {
   const fetchTools = async () => {
     setIsLoading(true);
     try {
+      console.log("Starting to fetch tools...");
       const { data, error } = await supabase
         .from("mcp_tools")
         .select("*")
         .in("status", ["approved", "pending"]);
+      
+      console.log("Supabase response:", { data: data?.length, error });
       
       if (error) {
         console.error("Error fetching tools:", error);
@@ -35,7 +38,7 @@ const Index = () => {
         setTools(data || []);
       }
     } catch (error) {
-      console.error("Error fetching tools:", error);
+      console.error("Catch error fetching tools:", error);
     }
     setIsLoading(false);
   };
