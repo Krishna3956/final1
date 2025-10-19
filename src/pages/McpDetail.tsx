@@ -508,25 +508,25 @@ const McpDetail = () => {
   const fetchToolDetails = useCallback(async () => {
     setIsLoading(true);
     
-    // Fetch from database
-    const { data, error } = await supabase
-      .from("mcp_tools")
-      .select("*")
-      .eq("repo_name", name)
-      .single();
-
-    if (error) {
+    // Fetch from API
+    let toolData: McpTool | null = null;
+    try {
+      const response = await fetch(`/api/tool/${name}`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch tool");
+      }
+      toolData = await response.json();
+      setTool(toolData);
+    } catch (error) {
       console.error("Error fetching tool:", error);
       setIsLoading(false);
       return;
     }
 
-    setTool(data);
-
     // Fetch owner info from GitHub
-    if (data?.github_url) {
+    if (toolData?.github_url) {
       try {
-        const urlParts = data.github_url.replace(/\/$/, '').split('/');
+        const urlParts = toolData.github_url.replace(/\/$/, '').split('/');
         const owner = urlParts[urlParts.length - 2];
         setOwnerName(owner);
         
@@ -537,7 +537,7 @@ const McpDetail = () => {
         }
 
         // Fetch README from GitHub
-        const repoPath = data.github_url.replace("https://github.com/", "").replace(/\/$/, "");
+        const repoPath = toolData.github_url.replace("https://github.com/", "").replace(/\/$/, "");
         console.log("Fetching README from:", `https://api.github.com/repos/${repoPath}/readme`);
         
         const readmeResponse = await fetchGitHub(
