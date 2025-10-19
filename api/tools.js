@@ -1,13 +1,8 @@
 import { createClient } from '@supabase/supabase-js';
 
-// Get env vars - try both VITE_ prefixed and non-prefixed versions
-const SUPABASE_URL = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL || '';
-const SUPABASE_KEY = process.env.VITE_SUPABASE_PUBLISHABLE_KEY || process.env.SUPABASE_PUBLISHABLE_KEY || '';
-
-console.log('API Initialization:', {
-  url: SUPABASE_URL ? 'SET' : 'MISSING',
-  key: SUPABASE_KEY ? 'SET' : 'MISSING'
-});
+// Get env vars with fallback to hardcoded values
+const SUPABASE_URL = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL || 'https://qficcofvzidpvkltjkmo.supabase.co';
+const SUPABASE_KEY = process.env.VITE_SUPABASE_PUBLISHABLE_KEY || process.env.SUPABASE_PUBLISHABLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFmaWNjb2Z2emlkcHZrbHRqa21vIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA4MzI4NzMsImV4cCI6MjA3NjQwODg3M30.LSM9vOL5Ze4ElXGheWcKdjd1DhRwdlXTVxZhKcAgQ0o';
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 

@@ -511,18 +511,11 @@ const McpDetail = () => {
     let toolData: McpTool | null = null;
     
     try {
-      const { data, error } = await supabase
-        .from("mcp_tools")
-        .select("*")
-        .eq("repo_name", name)
-        .single();
-      
-      if (error) {
-        console.error("Error fetching tool:", error);
-        setIsLoading(false);
-        return;
+      const response = await fetch(`/api/tool/${name}`);
+      if (!response.ok) {
+        throw new Error(`API returned ${response.status}`);
       }
-
+      const data = await response.json();
       toolData = data;
       setTool(data);
     } catch (error) {
